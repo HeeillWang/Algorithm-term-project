@@ -1,24 +1,27 @@
+#ifndef __REDBLACKTREE_H__
+#define __REDBLACKTREE_H__
+
 #include <stdio.h>
 #include <stdlib.h>
 #define RED 1
 #define BLACK 0
 #define MAXROW 100
 
-//rbtreeì˜ ë…¸ë“œ
-typedef struct _node{
-	struct _node * parent; //ë¶€ëª¨ ë…¸ë“œ
-	struct _node * left; //ì™¼ìª½ ìì‹ ë…¸ë“œ
-	struct _node * right; //ì˜¤ë¥¸ìª½ ìì‹ ë…¸ë“œ
-	char color; //ë ˆë“œë©´ 1, ë ˆë“œê°€ ì•„ë‹ˆë©´ 0 
+//rbtreeÀÇ ³ëµå
+typedef struct _node {
+	struct _node * parent; //ºÎ¸ğ ³ëµå
+	struct _node * left; //¿ŞÂÊ ÀÚ½Ä ³ëµå
+	struct _node * right; //¿À¸¥ÂÊ ÀÚ½Ä ³ëµå
+	char color; //·¹µå¸é 1, ·¹µå°¡ ¾Æ´Ï¸é 0 
 
-	//ë°ì´í„° í•„ë“œ
+	//µ¥ÀÌÅÍ ÇÊµå
 	int col;
 	int row;
 }Node;
 
 //rbtree
-typedef struct _rbtree{
-	int num; //ë…¸ë“œì˜ ê°¯ìˆ˜
+typedef struct _rbtree {
+	int num; //³ëµåÀÇ °¹¼ö
 
 	Node * root;
 }RBtree;
@@ -32,13 +35,12 @@ Node * GrandParent(Node * node);
 
 Node * Uncle(Node * node);
 
+int is_leaf(Node * node);   //
 Node * SetNode(int col, int right);
 
 void LRotate(Node * node);
 
 void RRotate(Node * node);
-
-void RBDelete(RBtree * rbtree, Node * delNode);
 
 int RBInsert(RBtree * rbtree, Node * newNode);
 void InsertCase1(RBtree * rbtree, Node * newNode);
@@ -47,10 +49,31 @@ void InsertCase3(RBtree * rbtree, Node * newNode);
 void InsertCase4(RBtree * rbtree, Node * newNode);
 void InsertCase5(RBtree * rbtree, Node * newNode);
 
-void RBPrint(RBtree * rbtree);
+//void RBPrint(Node * n, int depth);
 
 Node * RBSearch(RBtree * rbtree, int key);
 
+/* --------------------------------
+Deletion Function
+--------------------------------  */
+Node * rb_get_node_by_key(RBtree * haystack, int needle);
+Node * rb_min(RBtree * tree, Node * node);
 
-//ì œì¶œì‹œì—” ì‚­ì œ
-void RBTest_Print(Node * node);
+int RBdelete(RBtree * tree, int key);
+
+Node * sibling(RBtree * rbtree, Node * delNode);
+void replace_node(RBtree * rbtree, Node * delNode, Node * child);
+void delete_one_child(RBtree * rbtree, Node * delNode);
+
+void delete_case1(RBtree * rbtree, Node * delNode);
+void delete_case2(RBtree * rbtree, Node * delNode);
+void delete_case3(RBtree * rbtree, Node * delNode);
+void delete_case4(RBtree * rbtree, Node * delNode);
+void delete_case5(RBtree * rbtree, Node * delNode);
+void delete_case6(RBtree * rbtree, Node * delNode);
+
+
+//Á¦Ãâ½Ã¿£ »èÁ¦
+void RBTest_Print(Node * node, int depth);
+
+#endif

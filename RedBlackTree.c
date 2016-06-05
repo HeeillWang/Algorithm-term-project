@@ -1,26 +1,27 @@
 #include "RedBlackTree.h"
 
-//treeë¥¼ ì´ˆê¸°í™”
-void RBinit(RBtree * rbtree){
+
+//tree¸¦ ÃÊ±âÈ­
+void RBinit(RBtree * rbtree) {
 	rbtree->num = 0;
 	rbtree->root = NULL;
 }
 
-//nodeì˜ keyê°’ ë°˜í™˜
-int Getkey(Node * node){
-	return (node->col * MAXROW) + node->row; //keyëŠ” ì—´*100 + ì—´
+//nodeÀÇ key°ª ¹ÝÈ¯
+int Getkey(Node * node) {
+	return (node->col * MAXROW) + node->row; //key´Â ¿­*100 + ¿­
 }
 
-//ì£¼ì–´ì§„ ë…¸ë“œì˜ ì¡°ë¶€ëª¨ ë°˜í™˜
-Node * GrandParent(Node * node){
+//ÁÖ¾îÁø ³ëµåÀÇ Á¶ºÎ¸ð ¹ÝÈ¯
+Node * GrandParent(Node * node) {
 	if (node != NULL && node->parent != NULL)
 		return node->parent->parent;
 	else
 		return NULL;
 }
 
-//ì£¼ì–´ì§„ ë…¸ë“œì˜ ì‚¼ì´Œ ë°˜í™˜
-Node * Uncle(Node * node){
+//ÁÖ¾îÁø ³ëµåÀÇ »ïÃÌ ¹ÝÈ¯
+Node * Uncle(Node * node) {
 	Node * g = GrandParent(node);
 
 	if (g == NULL)
@@ -32,8 +33,19 @@ Node * Uncle(Node * node){
 
 }
 
-//ì£¼ì–´ì§„ ì¸ìžë¡œ ë…¸ë“œ ìƒì„±
-Node * SetNode(int col, int row){
+//¿À¸¥ÂÊ ÀÚ½Ä ³ëµå°¡ NILÀÌ¸é -1 ¹ÝÈ¯
+int is_leaf(Node * node)
+{
+	if (node->right != NULL)
+		return 0;
+	else
+		return -1;
+
+	//Node * child = is_leaf(delNode->right) ? delNode->left : delNode->right;
+}
+
+//ÁÖ¾îÁø ÀÎÀÚ·Î ³ëµå »ý¼º
+Node * SetNode(int col, int row) {
 	Node * newNode = (Node *)malloc(sizeof(Node));
 
 	newNode->col = col;
@@ -46,8 +58,8 @@ Node * SetNode(int col, int row){
 	return newNode;
 }
 
-//ì£¼ì–´ì§„ ë…¸ë“œë¥¼ ê¸°ì¤€ìœ¼ë¡œ ì™¼ìª½íšŒì „
-void LRotate(Node * node){
+//ÁÖ¾îÁø ³ëµå¸¦ ±âÁØÀ¸·Î ¿ÞÂÊÈ¸Àü
+void LRotate(Node * node) {
 	Node * r = node->right;
 	Node * p = node->parent;
 
@@ -59,7 +71,7 @@ void LRotate(Node * node){
 	r->left = node;
 	r->parent = p;
 
-	if (p != NULL){
+	if (p != NULL) {
 		if (p->left == node)
 			p->left = r;
 		else
@@ -67,8 +79,8 @@ void LRotate(Node * node){
 	}
 }
 
-//ì£¼ì–´ì§„ ë…¸ë“œë¥¼ ê¸°ì¤€ìœ¼ë¡œ ì˜¤ë¥¸ìª½íšŒì „
-void RRotate(Node * node){
+//ÁÖ¾îÁø ³ëµå¸¦ ±âÁØÀ¸·Î ¿À¸¥ÂÊÈ¸Àü
+void RRotate(Node * node) {
 	Node * l = node->left;
 	Node * p = node->parent;
 
@@ -80,7 +92,7 @@ void RRotate(Node * node){
 	l->right = node;
 	l->parent = p;
 
-	if (p != NULL){
+	if (p != NULL) {
 		if (p->left == node)
 			p->left = l;
 		else
@@ -88,43 +100,39 @@ void RRotate(Node * node){
 	}
 }
 
-void RBDelete(RBtree * rbtree, Node * delNode){
-
-}
-
-//ì´ë¯¸ treeì— ì¡´ìž¬í•˜ëŠ” keyë¥¼ ìž…ë ¥í•˜ë©´ -1ì„ ë°˜í™˜
-int RBInsert(RBtree * rbtree, Node * newNode){
-	Node * cur; //ì‚½ìž…í•  ìœ„ì¹˜
-	Node * p; //curì˜ ë¶€ëª¨ë…¸ë“œ
+//ÀÌ¹Ì tree¿¡ Á¸ÀçÇÏ´Â key¸¦ ÀÔ·ÂÇÏ¸é -1À» ¹ÝÈ¯
+int RBInsert(RBtree * rbtree, Node * newNode) {
+	Node * cur; //»ðÀÔÇÒ À§Ä¡
+	Node * p; //curÀÇ ºÎ¸ð³ëµå
 	int key = Getkey(newNode);
 
-	if (rbtree->root == NULL){
+	if (rbtree->root == NULL) {
 		newNode->color = BLACK;
 		rbtree->root = newNode;
 		rbtree->num++;
 		return 0;
 	}
-	else{
+	else {
 		cur = rbtree->root;
 
-		while (1){
-			if (Getkey(cur) > key){
+		while (1) {
+			if (Getkey(cur) > key) {
 				p = cur;
 				cur = cur->left;
 			}
-			else if (Getkey(cur) < key){
+			else if (Getkey(cur) < key) {
 				p = cur;
 				cur = cur->right;
 			}
-			else //ì´ë¯¸ ì¡´ìž¬í•˜ëŠ” keyê°’
+			else //ÀÌ¹Ì Á¸ÀçÇÏ´Â key°ª
 				return -1;
 
-			if (cur == NULL){ //íŠ¸ë¦¬ì˜ ì¢…ì ê¹Œì§€ ë‹¤ë‹¤ë¥¸ ìƒí™©ì´ë©´ bewNodeë¥¼ ì‚½ìž…í•´ì¤€ë‹¤.
+			if (cur == NULL) { //Æ®¸®ÀÇ Á¾Á¡±îÁö ´Ù´Ù¸¥ »óÈ²ÀÌ¸é bewNode¸¦ »ðÀÔÇØÁØ´Ù.
 				if (Getkey(p) > key)
 					p->left = newNode;
 				else if (Getkey(p) < key)
 					p->right = newNode;
-				else //ì´ë¯¸ ì¡´ìž¬í•˜ëŠ” key ê°’
+				else //ÀÌ¹Ì Á¸ÀçÇÏ´Â key °ª
 					return -1;
 
 				newNode->parent = p;
@@ -140,30 +148,30 @@ int RBInsert(RBtree * rbtree, Node * newNode){
 	return 0;
 }
 
-//ì‚½ìž…í•˜ë ¤ëŠ” ìœ„ì¹˜ê°€ rootì¼ ê²½ìš°
-void InsertCase1(RBtree * rbtree, Node * newNode){
+//»ðÀÔÇÏ·Á´Â À§Ä¡°¡ rootÀÏ °æ¿ì
+void InsertCase1(RBtree * rbtree, Node * newNode) {
 	if (newNode->parent == NULL)
 		newNode->color = BLACK;
 	else
 		InsertCase2(rbtree, newNode);
 }
 
-//ì‚½ìž…í•˜ë ¤ëŠ” ìœ„ì¹˜ì˜ ë¶€ëª¨ë…¸ë“œê°€ BLACKì¸ ê²½ìš°
-void InsertCase2(RBtree * rbtree, Node * newNode){
+//»ðÀÔÇÏ·Á´Â À§Ä¡ÀÇ ºÎ¸ð³ëµå°¡ BLACKÀÎ °æ¿ì
+void InsertCase2(RBtree * rbtree, Node * newNode) {
 	if (newNode->parent->color == BLACK)
 		return;
 	else
 		InsertCase3(rbtree, newNode);
 }
 
-//ë¶€ëª¨ë…¸ë“œì™€ ì‚¼ì´Œë…¸ë“œê°€ ëª¨ë‘ REDì¸ ê²½ìš°
-//ë¶€ëª¨ë…¸ë“œê°€ BLACKì¸ ê²½ìš°ëŠ” ì´ë¯¸ case2ì—ì„œ ë‹¤ë£¨ì—ˆìœ¼ë¯€ë¡œ ì—¬ê¸°ì„œëŠ” ë¶€ëª¨ë…¸ë“œê°€ REDìž„ì„ ê°€ì •í•  ìˆ˜ ìžˆë‹¤.
-void InsertCase3(RBtree * rbtree, Node * newNode){
+//ºÎ¸ð³ëµå¿Í »ïÃÌ³ëµå°¡ ¸ðµÎ REDÀÎ °æ¿ì
+//ºÎ¸ð³ëµå°¡ BLACKÀÎ °æ¿ì´Â ÀÌ¹Ì case2¿¡¼­ ´Ù·ç¾úÀ¸¹Ç·Î ¿©±â¼­´Â ºÎ¸ð³ëµå°¡ REDÀÓÀ» °¡Á¤ÇÒ ¼ö ÀÖ´Ù.
+void InsertCase3(RBtree * rbtree, Node * newNode) {
 	Node * u = Uncle(newNode);
 	Node * g = GrandParent(newNode);
 
-	//ë¶€ëª¨ì™€ ì‚¼ì´Œ ë…¸ë“œë¥¼ BLACKìœ¼ë¡œ ë³€ê²½í•˜ê³ , ì¡°ë¶€ëª¨ ë…¸ë“œë¥¼ REDë¡œ ë³€ê²½í•œë‹¤. ì´í›„ ì¡°ë¶€ëª¨ ë…¸ë“œì— ëŒ€í•´ Insertë¥¼ ì§„í–‰í•œë‹¤
-	if ((u != NULL) && (u->color == RED)){
+	//ºÎ¸ð¿Í »ïÃÌ ³ëµå¸¦ BLACKÀ¸·Î º¯°æÇÏ°í, Á¶ºÎ¸ð ³ëµå¸¦ RED·Î º¯°æÇÑ´Ù. ÀÌÈÄ Á¶ºÎ¸ð ³ëµå¿¡ ´ëÇØ Insert¸¦ ÁøÇàÇÑ´Ù
+	if ((u != NULL) && (u->color == RED)) {
 		newNode->parent->color = BLACK;
 		u->color = BLACK;
 		g->color = RED;
@@ -176,70 +184,66 @@ void InsertCase3(RBtree * rbtree, Node * newNode){
 
 
 /*
- ë¶€ëª¨ë…¸ë“œê°€ REDì´ê³  ì‚¼ì´Œë…¸ë“œê°€ BLACKì¸ ê²½ìš°ì—ëŠ”
- newNodeê°€ ë¶€ëª¨ë…¸ë“œì˜ ì˜¤ë¥¸ìª½ ìžì‹ì´ë©° ë¶€ëª¨ë…¸ë“œëŠ” ì¡°ë¶€ëª¨ ë…¸ë“œì˜ ì™¼ìª½ ìžì‹ì¸ ê²½ìš°ì™€ (1)
- newNodeê°€ ë¶€ëª¨ë…¸ë“œì˜ ì™¼ìª½ ìžì‹ì´ë©° ì¡°ë¶€ëª¨ ë…¸ë“œì˜ ì˜¤ë¥¸ìª½ ìžì‹ì¸ ê²½ìš° 2ê°€ì§€ë¥¼ ë‹¤ë£¨ê²Œëœë‹¤. (2) 
- ë¶€ëª¨ë…¸ë“œë¥¼ ê¸°ì¤€ìœ¼ë¡œ (1)ì˜ ê²½ìš°ì—” ì™¼ìª½ íšŒì „ì„ í•´ì£¼ê³  (2)ì˜ ê²½ìš°ì—” ì˜¤ë¥¸ìª½ íšŒì „ì„ í•˜ì—¬ newNodeì™€ ë¶€ëª¨ë…¸ë“œì˜ ì—­í• ì„ ë°”ê¿”ì¤€ë’¤ì— case5ë¡œ ë„˜ê¸´ë‹¤.
- ë¶€ëª¨ë…¸ë“œì™€ ì‚¼ì´Œë…¸ë“œê°€ ëª¨ë“œ REDì¸ ê²½ìš°ëŠ” case3ì—ì„œ ë‹¤ë£¨ì—ˆìœ¼ë¯€ë¡œ ì—¬ê¸°ì„œëŠ” ë¶€ëª¨ë…¸ë“œê°€ RED ì‚¼ì´Œë…¸ë“œê°€ BLACKìž„ì„ ê°€ì •í•  ìˆ˜ ìžˆë‹¤.
- */
-void InsertCase4(RBtree * rbtree, Node * newNode){
+ºÎ¸ð³ëµå°¡ REDÀÌ°í »ïÃÌ³ëµå°¡ BLACKÀÎ °æ¿ì¿¡´Â
+newNode°¡ ºÎ¸ð³ëµåÀÇ ¿À¸¥ÂÊ ÀÚ½ÄÀÌ¸ç ºÎ¸ð³ëµå´Â Á¶ºÎ¸ð ³ëµåÀÇ ¿ÞÂÊ ÀÚ½ÄÀÎ °æ¿ì¿Í (1)
+newNode°¡ ºÎ¸ð³ëµåÀÇ ¿ÞÂÊ ÀÚ½ÄÀÌ¸ç Á¶ºÎ¸ð ³ëµåÀÇ ¿À¸¥ÂÊ ÀÚ½ÄÀÎ °æ¿ì 2°¡Áö¸¦ ´Ù·ç°ÔµÈ´Ù. (2)
+ºÎ¸ð³ëµå¸¦ ±âÁØÀ¸·Î (1)ÀÇ °æ¿ì¿£ ¿ÞÂÊ È¸ÀüÀ» ÇØÁÖ°í (2)ÀÇ °æ¿ì¿£ ¿À¸¥ÂÊ È¸ÀüÀ» ÇÏ¿© newNode¿Í ºÎ¸ð³ëµåÀÇ ¿ªÇÒÀ» ¹Ù²ãÁØµÚ¿¡ case5·Î ³Ñ±ä´Ù.
+ºÎ¸ð³ëµå¿Í »ïÃÌ³ëµå°¡ ¸ðµå REDÀÎ °æ¿ì´Â case3¿¡¼­ ´Ù·ç¾úÀ¸¹Ç·Î ¿©±â¼­´Â ºÎ¸ð³ëµå°¡ RED »ïÃÌ³ëµå°¡ BLACKÀÓÀ» °¡Á¤ÇÒ ¼ö ÀÖ´Ù.
+*/
+void InsertCase4(RBtree * rbtree, Node * newNode) {
 	Node * g = GrandParent(newNode);
 	Node * p = newNode->parent;
 
-	if ((newNode == p->right) && (p == g->left)){ //(1)ì˜ ê²½ìš°
+	if ((newNode == p->right) && (p == g->left)) { //(1)ÀÇ °æ¿ì
 		LRotate(p);
-		newNode = newNode->left; //ë³€ê²½ëœ ìœ„ì¹˜ì˜ pë…¸ë“œë¥¼ ì§€ì •
+		newNode = newNode->left; //º¯°æµÈ À§Ä¡ÀÇ p³ëµå¸¦ ÁöÁ¤
 	}
-	else if ((newNode == p->left) && (p == g->right)){ //(2)ì˜ ê²½ìš°
+	else if ((newNode == p->left) && (p == g->right)) { //(2)ÀÇ °æ¿ì
 		RRotate(p);
-		newNode = newNode->right; //ë³€ê²½ëœ ìœ„ì¹˜ì˜ pë…¸ë“œë¥¼ ì§€ì •
+		newNode = newNode->right; //º¯°æµÈ À§Ä¡ÀÇ p³ëµå¸¦ ÁöÁ¤
 	}
 
-	InsertCase5(rbtree,newNode);
+	InsertCase5(rbtree, newNode);
 }
 
 /*
-ë¶€ëª¨ë…¸ë“œê°€ REDì´ê³  ì‚¼ì´Œë…¸ë“œê°€ BLACKì´ë©°
-newNodeê°€ ë¶€ëª¨ë…¸ë“œì˜ ì˜¤ë¥¸ìª½ ìžì‹ì´ë©° ë¶€ëª¨ë…¸ë“œëŠ” ì¡°ë¶€ëª¨ ë…¸ë“œì˜ ì˜¤ë¥¸ìª½ ìžì‹ì¸ ê²½ìš°ì™€(1)
-newNodeê°€ ë¶€ëª¨ë…¸ë“œì˜ ì™¼ìª½ ìžì‹ì´ë©° ë¶€ëª¨ë…¸ë“œëŠ” ì¡°ë¶€ëª¨ ë…¸ë“œì˜ ì™¼ìª½ ìžì‹ì¸ ê²½ìš° 2ê°€ì§€ë¥¼ ë‹¤ë£¨ê²Œ ëœë‹¤(2)
-ì¡°ë¶€ëª¨ ë…¸ë“œë¥¼ REDë¡œ, ë¶€ëª¨ë…¸ë“œë¥¼ BLACKìœ¼ë¡œ ë³€ê²½í•œë’¤ì— 
-ì¡°ë¶€ëª¨ ë…¸ë“œë¥¼ ê¸°ì¤€ìœ¼ë¡œ (1)ì˜ ê²½ìš°ì—” ì™¼ìª½ íšŒì „ì„ (2)ì˜ ê²½ìš°ì—” ì˜¤ë¥¸ìª½ íšŒì „ì„ í•´ì¤€ë‹¤.
-ì´ë¡œì¨ RBtreeì˜ ëª¨ë“  íŠ¹ì„±ì„ ë§Œì¡±í•˜ê²Œ ëœë‹¤.
+ºÎ¸ð³ëµå°¡ REDÀÌ°í »ïÃÌ³ëµå°¡ BLACKÀÌ¸ç
+newNode°¡ ºÎ¸ð³ëµåÀÇ ¿À¸¥ÂÊ ÀÚ½ÄÀÌ¸ç ºÎ¸ð³ëµå´Â Á¶ºÎ¸ð ³ëµåÀÇ ¿À¸¥ÂÊ ÀÚ½ÄÀÎ °æ¿ì¿Í(1)
+newNode°¡ ºÎ¸ð³ëµåÀÇ ¿ÞÂÊ ÀÚ½ÄÀÌ¸ç ºÎ¸ð³ëµå´Â Á¶ºÎ¸ð ³ëµåÀÇ ¿ÞÂÊ ÀÚ½ÄÀÎ °æ¿ì 2°¡Áö¸¦ ´Ù·ç°Ô µÈ´Ù(2)
+Á¶ºÎ¸ð ³ëµå¸¦ RED·Î, ºÎ¸ð³ëµå¸¦ BLACKÀ¸·Î º¯°æÇÑµÚ¿¡
+Á¶ºÎ¸ð ³ëµå¸¦ ±âÁØÀ¸·Î (1)ÀÇ °æ¿ì¿£ ¿ÞÂÊ È¸ÀüÀ» (2)ÀÇ °æ¿ì¿£ ¿À¸¥ÂÊ È¸ÀüÀ» ÇØÁØ´Ù.
+ÀÌ·Î½á RBtreeÀÇ ¸ðµç Æ¯¼ºÀ» ¸¸Á·ÇÏ°Ô µÈ´Ù.
 */
-void InsertCase5(RBtree * rbtree, Node * newNode){
+void InsertCase5(RBtree * rbtree, Node * newNode) {
 	Node * g = GrandParent(newNode);
 	Node * p = newNode->parent;
 
 	if (g != NULL)
-	    g->color = RED;
+		g->color = RED;
 
 	p->color = BLACK;
 
-	if (newNode == p->right){//(1)ì˜ ê²½ìš°
+	if (newNode == p->right) {//(1)ÀÇ °æ¿ì
 		LRotate(g);
 
-		if (rbtree->root == g) //ë£¨íŠ¸ë…¸ë“œê°€ ë³€ê²½ëœ ê²½ìš°
+		if (rbtree->root == g) //·çÆ®³ëµå°¡ º¯°æµÈ °æ¿ì
 			rbtree->root = p;
 	}
-	else{ //(2)ì˜ ê²½ìš° 
+	else { //(2)ÀÇ °æ¿ì 
 		RRotate(g);
 
-		if (rbtree->root == g) //ë£¨íŠ¸ë…¸ë“œê°€ ë³€ê²½ëœ ê²½ìš°
+		if (rbtree->root == g) //·çÆ®³ëµå°¡ º¯°æµÈ °æ¿ì
 			rbtree->root = p;
 	}
 }
 
-void RBPrint(RBtree * rbtree){
-
-}
-
-//rbtreeì—ì„œ keyê°’ì„ ê°–ëŠ” ë…¸ë“œë¥¼ ì°¾ëŠ”ë‹¤.
-//ë…¸ë“œë¥¼ ê²€ìƒ‰í•˜ëŠ”ë° ì„±ê³µí•  ê²½ìš° ê·¸ ë…¸ë“œì˜ ì£¼ì†Œê°’ ë°˜í™˜
-//ê²€ìƒ‰ì— ì‹¤íŒ¨í•  ê²½ìš°(keyê°’ì„ ê°–ëŠ” ë…¸ë“œê°€ ì—†ëŠ” ê²½ìš°) NULLë°˜í™˜
-Node * RBSearch(RBtree * rbtree, int key){
+//rbtree¿¡¼­ key°ªÀ» °®´Â ³ëµå¸¦ Ã£´Â´Ù.
+//³ëµå¸¦ °Ë»öÇÏ´Âµ¥ ¼º°øÇÒ °æ¿ì ±× ³ëµåÀÇ ÁÖ¼Ò°ª ¹ÝÈ¯
+//°Ë»ö¿¡ ½ÇÆÐÇÒ °æ¿ì(key°ªÀ» °®´Â ³ëµå°¡ ¾ø´Â °æ¿ì) NULL¹ÝÈ¯
+Node * RBSearch(RBtree * rbtree, int key) {
 	Node * cur = rbtree->root;
 
-	while (1){
+	while (1) {
 		if (Getkey(cur) == key)
 			return cur;
 		else if (Getkey(cur) > key)
@@ -250,17 +254,302 @@ Node * RBSearch(RBtree * rbtree, int key){
 		if (cur == NULL)
 			return NULL;
 	}
-
 }
 
-//ë””ë²„ê¹…ì„ ìœ„í•œ ìš©ë„ ìž„ì‹œ í”„ë¦°íŠ¸, preorderí˜•ì‹
-//ì œì¶œ ì‹œì—” ì‚­ì œ
-void RBTest_Print(Node * node){
+/* -------------------- Deletion -------------------- */
+
+
+//³ëµå ¾È¿¡ ÀÖ´Â °¡·Î ¼¼·Î°¡ °è»êµÈ ÇüÅÂÀÇ Key °ªÀ» ¾ò´Â´Ù.
+Node * rb_get_node_by_key(RBtree * haystack, int needle) {
+	Node * pos = haystack->root; /* our current position */
+	while (pos != NULL) {
+		if (Getkey(pos) == needle) {
+			return pos;
+		}
+		else if (needle < Getkey(pos)) {
+			pos = pos->left;
+		}
+		else {
+			pos = pos->right;
+		}
+	}
+	return NULL;
+}
+
+//¼­ºêÆ®¸®ÀÇ ÃÖ¼Ò°ªÀ» ¹ÝÈ¯ÇÑ´Ù.
+Node * rb_min(RBtree * tree, Node * node) {
+	while (node->left != NULL)
+		node = node->left;
+	return node;
+}
+
+//ÀÔ·ÂµÈ Key °ªÀ» »èÁ¦ÇÑ´Ù.
+int RBdelete(RBtree * tree, int key) {
+
+	Node * fixit = tree->root;
+
+	Node * dead = rb_get_node_by_key(tree, key);
+
+	int orig_col = dead->color;
+
+	if (dead == NULL) {
+		printf("Error: node %d does not exist.\n", key);
+		return 0;
+	}
+
+	if (dead->left == NULL && dead->right != NULL) {
+		fixit = dead->right;
+		replace_node(tree, dead, fixit);
+	}
+	else if (dead->right == NULL && dead->left != NULL) {
+		fixit = dead->left;
+		replace_node(tree, dead, fixit);
+	}
+	else if (dead->right == NULL && dead->left == NULL) {
+		fixit = NULL;
+		replace_node(tree, dead, fixit);
+	}
+	else {
+
+		Node * successor = rb_min(tree, dead->right);
+		orig_col = successor->color;
+		if (successor->right != NULL)
+			fixit = successor->right;
+		if (successor->parent == dead) {
+			fixit->parent = successor;
+		}
+		else {
+
+			replace_node(tree, successor, successor->right);
+			successor->right = dead->right;
+			successor->right->parent = successor;
+		}
+		replace_node(tree, dead, successor);
+		successor->left = dead->left;
+		successor->left->parent = successor;
+		successor->color = dead->color;
+	}
+
+	if (orig_col == BLACK) {
+		delete_one_child(tree, fixit);
+	}
+	return 1;
+}
+
+//»èÁ¦ÇÒ Key °ªÀÇ ¹æÇâÀ» È®ÀÎÇÑ´Ù.
+Node * sibling(RBtree * rbtree, Node * delNode)
+{
+	Node * p = delNode->parent;
+
+	if (delNode == p->left)
+		return p->right;
+	else
+		return p->left;
+}
+
+//Key°ª »èÁ¦·Î ÀÎÇØ º¯È­ÇÏ´Â ´Ù¸¥ ³ëµåµéÀÇ Å°°ªÀ» »õ·Ó°Ô ¹Ù²ãÁØ´Ù.
+void replace_node(RBtree * rbtree, Node * delNode, Node * child)
+{
+	if (delNode->parent == NULL)
+	{
+		rbtree->root = child;
+	}
+	else
+	{
+		if (delNode == delNode->parent->left)
+			delNode->parent->left = child;
+		else
+			delNode->parent->right = child;
+	}
+	if (child != NULL)
+	{
+		child->parent = delNode->parent;
+	}
+}
+
+//»èÁ¦µÉ Key°¡ À§Ä¡ÇÑ ³ëµå¸¦ Ã£¾Æ³½´Ù.
+void delete_one_child(RBtree * rbtree, Node * delNode)
+{
+	Node * child = is_leaf(delNode->right) ? delNode->left : delNode->right;
+
+	replace_node(rbtree, delNode, child);
+	if (delNode->color == BLACK) {
+		if (child->color == RED)
+			child->color = BLACK;
+		else
+			delete_case1(rbtree, child);
+	}
+	free(delNode);
+}
+
+void delete_case1(RBtree * rbtree, Node * delNode)
+{
+	if (delNode->parent != NULL)
+		delete_case2(rbtree, delNode);
+}
+
+void delete_case2(RBtree * rbtree, Node * delNode)
+{
+	Node * s = sibling(rbtree, delNode);
+	Node * p = delNode->parent;
+
+	if (s->color == RED) {
+		p->color = RED;
+		s->color = BLACK;
+		if (delNode == p->left)
+			LRotate(p);
+		else
+			RRotate(p);
+	}
+	delete_case3(rbtree, delNode);
+}
+
+void delete_case3(RBtree * rbtree, Node * delNode)
+{
+	Node * s = sibling(rbtree, delNode);
+	Node * p = delNode->parent;
+
+	if ((p->color == BLACK) &&
+		(s->color == BLACK) &&
+		(s->left->color == BLACK) &&
+		(s->right->color == BLACK)) {
+		s->color = RED;
+		delete_case1(rbtree, p);
+	}
+	else
+		delete_case4(rbtree, delNode);
+}
+
+void delete_case4(RBtree * rbtree, Node * delNode)
+{
+	Node *s = sibling(rbtree, delNode);
+	Node * p = delNode->parent;
+
+	if ((p->color == RED) &&
+		(s->color == BLACK) &&
+		(s->left->color == BLACK) &&
+		(s->right->color == BLACK)) {
+		s->color = RED;
+		p->color = BLACK;
+	}
+	else
+		delete_case5(rbtree, delNode);
+}
+
+void delete_case5(RBtree * rbtree, Node * delNode)
+{
+	Node * s = sibling(rbtree, delNode);
+	Node * p = delNode->parent;
+
+	if (s->color == BLACK)
+	{
+		if ((delNode == p->left) &&
+			(s->right->color == BLACK) &&
+			(s->left->color == RED)) {
+			s->color = RED;
+			s->left->color = BLACK;
+			RRotate(s);
+		}
+		else if ((delNode == p->right) &&
+			(s->left->color == BLACK) &&
+			(s->right->color == RED)) {
+			s->color = RED;
+			s->right->color = BLACK;
+			LRotate(s);
+		}
+	}
+	delete_case6(rbtree, delNode);
+}
+
+void delete_case6(RBtree * rbtree, Node * delNode)
+{
+	Node * s = sibling(rbtree, delNode);
+	Node * p = delNode->parent;
+
+	s->color = p->color;
+	p->color = BLACK;
+
+	if (delNode == p->left) {
+		s->right->color = BLACK;
+		LRotate(p);
+	}
+	else {
+		s->left->color = BLACK;
+		RRotate(p);
+	}
+}
+
+/* --------------------- Print --------------------------- */
+
+/*
+int PrintTree(Node* tree)
+{
+// TODO:
+if (tree == NULL)
+return 1;
+
+PrintTree(tree->left);
+printf("%d ", tree->data);
+PrintTree(tree->right);
+
+return 0;
+}
+*/
+
+/*
+void RBPrint(Node * n, int depth)
+{
+for (int i = 0; i < depth; i++)
+{
+printf("  ");
+}
+
+//if (n->parent == NULL)
+//{
+//	printf("[Root)");
+//}
+//else
+//{
+if (n->parent == n)
+printf("[(Left)");
+else
+printf("[(Right)");
+//}
+
+printf("Data: %d(%d)", Getkey(n), n->color);
+printf(",Parent");
+if (n->parent != NULL)
+printf("%d", Getkey(n));
+else
+printf(" ");
+
+RBPrint(n->left, depth + 1);
+RBPrint(n->right, depth + 1);
+}
+*/
+
+//µð¹ö±ëÀ» À§ÇÑ ¿ëµµ ÀÓ½Ã ÇÁ¸°Æ®, preorderÇü½Ä
+//Á¦Ãâ ½Ã¿£ »èÁ¦
+void RBTest_Print(Node * node, int depth) {
+	int tmp;
 	if (node == NULL)
 		return;
-	
-	printf("%d(%d) ", Getkey(node), node->color); //key(ìƒ‰)
-	
-	RBTest_Print(node->left);
-	RBTest_Print(node->right);
+
+	printf("                   ");
+
+	for (int i = 0; i < depth; i++)
+	{
+		printf("     ");
+	}
+
+	printf("[%d(%d)]", Getkey(node), node->color); //key(»ö)
+
+	printf("\n");
+
+	//RBTest_Print(node->left, depth);
+	//RBTest_Print(node->right, depth);
+
+	RBTest_Print(node->left, depth / 2);
+	RBTest_Print(node->right, (depth / 2) + depth + depth);
+	//RBTest_Print(node->right, (depth*2) + depth + depth + depth);
 }
