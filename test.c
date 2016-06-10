@@ -1,30 +1,27 @@
-#include "RedBlackTree.h"
+#include "Theater.h"
 
 int main(void){
-	int n,col,row;
+
+	int n, col, row;
 	int key;
-	RBtree * rbtree = (RBtree *)malloc(sizeof(RBtree));
+	RBtree * rbtree = RBcreate();
 	Node * temp;
 
-	RBinit(rbtree);
-	
 	scanf("%d", &n);
 
 	for (; n > 0; n--){
 		scanf("%d %d", &col, &row);
-		temp=SetNode(col, row);
-		RBInsert(rbtree,temp);
-	}
 	
-	RBTest_Print(rbtree->root);
+		RBinsert(rbtree, col*100 + row);
+	}
 
 
 	printf("\nkey : ");
 	scanf("%d", &key);
 
-	if (RBSearch(rbtree, key) == NULL)
-		printf("Ã£´Â key°¡ ¾øÀ½\n");
+	if (RBdelete(rbtree, key) == 0)
+		printf("ì°¾ëŠ” keyê°€ ì—†ìŒ\n");
 	else
-		printf("°Ë»ö ¼º°ø!\n");
-	
+		printf("ì‚­ì œ ì„±ê³µ!\n");
 }
+	
