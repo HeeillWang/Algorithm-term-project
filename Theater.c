@@ -4,6 +4,8 @@ const char movielist[NUM_THEATHER][30] = { "곡성", "앵그리버드", "엑스맨 : 아포�
 const int movietime[NUM_THEATHER] = { 236, 137, 223, 224, 150 }; //영화 리스트의 상영시간, 1시간 30분 => 130의 형식
 
 
+
+
 //특정 날짜의 타임테이블 정보 출력
 void PrintTimetable(Timetable_of_Day timetable){
 	int i, j;
@@ -41,4 +43,12 @@ void TimeTableInit(Timetable_of_Day timetable[]){
 		}
 	}
 
+}
+
+int GetRow(int key){
+	return key % 100;
+}
+
+int GetCol(int key){
+	return key / 100;
 }

@@ -1,7 +1,7 @@
 #ifndef __THEATER_H__
 #define __THEATER_H__
 
-#include "RedBlackTree.h"
+#include "RBtree.h"
 
 
 #include <string.h>
@@ -45,5 +45,10 @@ void PrintTimetable(Timetable_of_Day timetable);
 
 //MAX_DAY일치의 타임테이블을 초기화한다.
 void TimeTableInit(Timetable_of_Day timetable[]);
+
+int GetRow(int key);
+
+int GetCol(int key);
+
 
 #endif
